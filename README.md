@@ -1,45 +1,77 @@
-English | [简体中文](./README_CN.md)
+## Smali/Baksmali Android File in Linux environment
+  
+反编译/回编译安卓文件 Linux环境操作
+----------------------------
+# 版本/Version
 
-### tools Introduction
+# 第一版
 
-  * autopatch
-    Flyme changes will be merged into the vendor model tool for the first time to
-    perform `patchall` or late upgrade `upgrade`.
+# 日期：2017-6-7
+============================
 
-  * bootimgpack
-    Pack or unpack boot.img/recovery.img tool.
+First：
 
-  * common
-    Some common tools.
+   $ mkdir ~/Mytools
 
-  * config
-    `makeconfig` or `flyme config` to execute the call of the tools used to create the configuration.
+   $ cd ~/Mytools
+   
+   $ git clone https://github.com/Waitlan/tools.git
 
-  * formatters
-    Formatted text, such as deleting `smali` in `.line`, or `id` and `name` conversion.
+Next:
 
-  * helpdoc
-    Help document, and return the cause of the error when the program executes an error.
+----------------------------
+1. Smali/反编译 jar
+   
+   EXAMPLE
 
-  * reverses
-    Pack or unpack apk/jar and unpack the block package and odex2dex tool.
+   $ ~/Mytools/tools/apktool --quiet d -f framework.jar -o framework.jar.out
 
-  * smaliparser
-    smali file analyzer, used to deal with the smali file to better patch.
+2. Baksmali/回编译 jar
 
-  * su-tools
-    Root permissions with `adb pull` or `adb push` can facilitate the push file to the phone system.
+   EXAMPLE
+ 
+   $ ~/Mytools/tools/apktool --quiet b services.jar.out -o services.jar
+   
+   回编译这个操作并没有签名，所以修改后手动讲回编译的文件打开将classes.dex替换到原来的jar里覆盖
+----------------------------
+3. Smali/反编译 apk
+   
+   EXAMPLE
 
-  * workflow
-    Workflow configuration tool.
+   $ ~/Mytools/tools/apktool --quiet d -f framework-res.apk -o framework-res
 
-  * aapt adb fastboot zipalign
-    From the corresponding Android version of the AOSP tools.
+4. Baksmali/回编译 apk
 
-  * otadiff
-    Scripts used to generate differential packages.
+   EXAMPLE
+ 
+   $ ~/Mytools/tools/apktool --quiet b framework-res -o 1framework-res.apk
 
-### Changelog
+   回编译这个操作并没有签名，所以修改后手动讲回编译的文件打开将classes.dex/resources.arsc或者res/xml下相关文件替换到原来的apk里覆盖
+----------------------------
+5. Smali/反编译 classes.dex to out
 
-[CHANGELOG.md](./CHANGELOG.md)
+   EXAMPLE
 
+   $ ~/Mytools/tools/baksmali classes.dex
+   
+   You will see out directory./你可以看见同目录生成out文件夹
+
+6. Baksmali/回编译 out to out.dex
+
+   EXAMPLE
+
+   $ ~/Mytools/tools/smali out
+   
+   You will see out.dex./你可以看见生成一个out.dex，手动重命名为classes.dex
+----------------------------
+7. Install/安装依赖框架
+   
+     Some机型例如小米有很多资源在其他apk关联，要安装框架才可以反编译/回编译其他apk
+
+      EXAMPLE
+
+       $ ~/Mytools/tools/apktool if framework-res.apk
+   
+===========================
+
+## 版权所有@Waitlan(曦颜XY)
